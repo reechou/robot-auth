@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"net/http"
-	"io/ioutil"
 	"errors"
-	
+	"io/ioutil"
+	"net/http"
+
 	"github.com/reechou/holmes"
 	"github.com/reechou/robot-auth/proto"
 )
@@ -19,7 +19,7 @@ type HandlerRequest struct {
 	Val    []byte
 }
 
-type AuthHandler struct{
+type AuthHandler struct {
 	l *Logic
 }
 
@@ -30,7 +30,7 @@ func (self *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writeRsp(w, &proto.Response{Code: proto.RESPONSE_ERR})
 		return
 	}
-	
+
 	rsp := self.l.doAuth(rr)
 	writeRsp(w, rsp)
 }
@@ -38,16 +38,16 @@ func (self *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func parseRequest(r *http.Request) (*HandlerRequest, error) {
 	req := &HandlerRequest{}
 	req.Path = r.URL.Path[len(AuthPrefix)+1:]
-	
+
 	result, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return req, errors.New("parse request read error")
 	}
 	r.Body.Close()
-	
+
 	req.Method = r.Method
 	req.Val = result
-	
+
 	return req, nil
 }
 

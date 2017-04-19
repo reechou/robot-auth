@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"encoding/json"
-	"time"
-	"fmt"
 	"crypto/md5"
 	"encoding/hex"
-	
-	"github.com/reechou/holmes"
-	"github.com/reechou/robot-auth/proto"
-	"github.com/reechou/robot-auth/models"
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"github.com/dchest/uniuri"
+	"github.com/reechou/holmes"
+	"github.com/reechou/robot-auth/models"
+	"github.com/reechou/robot-auth/proto"
 	"github.com/satori/go.uuid"
 )
 
@@ -29,7 +29,7 @@ func (self *Logic) doAuth(rr *HandlerRequest) *proto.Response {
 
 func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
 	rsp := &proto.Response{Code: proto.RESPONSE_OK}
-	
+
 	req := &proto.CreateRobotAuthReq{}
 	err := json.Unmarshal(rr.Val, &req)
 	if err != nil {
@@ -37,22 +37,22 @@ func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	var authCodeList []string
 	for i := 0; i < req.Num; i++ {
 		u := uuid.NewV4()
 		authCodeList = append(authCodeList, u.String())
 	}
-	
+
 	now := time.Now().Unix()
-	endTime := now + int64(86400 * req.ExpiryDate)
+	endTime := now + int64(86400*req.ExpiryDate)
 	var authList []models.RobotAuth
 	for _, v := range authCodeList {
 		authList = append(authList, models.RobotAuth{
-			AuthCode: v,
+			AuthCode:  v,
 			CreatedAt: now,
 			UpdatedAt: now,
-			EndTime: endTime,
+			EndTime:   endTime,
 		})
 	}
 	err = models.CreateRobotAuthList(authList)
@@ -61,15 +61,15 @@ func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
 		rsp.Msg = fmt.Sprintf("create auth list of num[%d] error", req.Num)
 		return rsp
 	}
-	
+
 	rsp.Data = authCodeList
-	
+
 	return rsp
 }
 
 func (self *Logic) doAuthUri(rr *HandlerRequest) *proto.Response {
 	rsp := &proto.Response{Code: proto.RESPONSE_OK}
-	
+
 	req := &proto.CheckRobotAuthReq{}
 	err := json.Unmarshal(rr.Val, &req)
 	if err != nil {
@@ -77,7 +77,7 @@ func (self *Logic) doAuthUri(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	ra := &models.RobotAuth{
 		AuthCode: req.AuthCode,
 	}
@@ -91,7 +91,7 @@ func (self *Logic) doAuthUri(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	tempUri := uniuri.New()
 	ra.TempUri = tempUri
 	ra.IfUseUri = 0
@@ -102,13 +102,13 @@ func (self *Logic) doAuthUri(rr *HandlerRequest) *proto.Response {
 		return rsp
 	}
 	rsp.Data = tempUri
-	
+
 	return rsp
 }
 
 func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 	rsp := &proto.Response{Code: proto.RESPONSE_OK}
-	
+
 	req := &proto.CheckRobotAuthReq{}
 	err := json.Unmarshal(rr.Val, &req)
 	if err != nil {
@@ -116,7 +116,7 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	ra := &models.RobotAuth{
 		AuthCode: req.AuthCode,
 	}
@@ -130,13 +130,13 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	now := time.Now().Unix()
 	if now > ra.EndTime {
 		rsp.Code = proto.RESPONSE_EXPIRED
 		return rsp
 	}
-	
+
 	md5Key := fmt.Sprintf("%s%s", ra.AuthCode, ra.TempUri)
 	allSecretKey := string(md5Of32(md5Of32([]byte(md5Key))))
 	if len(allSecretKey) < 8 {
@@ -145,14 +145,14 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 		return rsp
 	}
 	realSecretKey := allSecretKey[:8]
-	
+
 	if realSecretKey != rr.Path || ra.IfUseUri != 0 {
 		holmes.Error("uri check error: %s %s or uri has used[%d]", realSecretKey, rr.Path, ra.IfUseUri)
 		rsp.Code = proto.RESPONSE_ERR
 		rsp.Msg = "uri error or uri has used."
 		return rsp
 	}
-	
+
 	if ra.MachineCode == "" {
 		ra.MachineCode = req.MachineCode
 		ra.IfUseUri = 1
@@ -170,13 +170,13 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 	}
 	ra.IfUseUri = 1
 	models.UpdateRobotAuthTempUriIfUse(ra)
-	
+
 	return rsp
 }
 
 func (self *Logic) doResetAuth(rr *HandlerRequest) *proto.Response {
 	rsp := &proto.Response{Code: proto.RESPONSE_OK}
-	
+
 	req := &proto.CheckRobotAuthReq{}
 	err := json.Unmarshal(rr.Val, &req)
 	if err != nil {
@@ -184,7 +184,7 @@ func (self *Logic) doResetAuth(rr *HandlerRequest) *proto.Response {
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
-	
+
 	ra := &models.RobotAuth{
 		AuthCode: req.AuthCode,
 	}
@@ -193,7 +193,7 @@ func (self *Logic) doResetAuth(rr *HandlerRequest) *proto.Response {
 		holmes.Error("reset robot auth error: %v", err)
 		rsp.Code = proto.RESPONSE_ERR
 	}
-	
+
 	return rsp
 }
 

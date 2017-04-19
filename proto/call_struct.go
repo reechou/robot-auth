@@ -14,11 +14,11 @@ type Response struct {
 }
 
 type CreateRobotAuthReq struct {
-	Num int `json:"num"`
+	Num        int `json:"num"`
 	ExpiryDate int `json:"expiryDate"` // day
 }
 
 type CheckRobotAuthReq struct {
-	AuthCode string `json:"authCode"`
+	AuthCode    string `json:"authCode"`
 	MachineCode string `json:"machineCode"`
 }

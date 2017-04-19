@@ -21,7 +21,7 @@ func (self *Logic) RobotReceiveMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	self.HandleReceiveMsg(req)
-	
+
 	rsp := &robot_proto.CallbackMsgInfo{RetResponse: robot_proto.RetResponse{Code: proto.RESPONSE_OK}}
 	WriteJSON(w, http.StatusOK, rsp)
 }

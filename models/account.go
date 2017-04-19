@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"time"
-	
+
 	"github.com/reechou/holmes"
 )
 
@@ -22,18 +22,18 @@ func CreateRobotAuth(info *RobotAuth) error {
 	if info.AuthCode == "" {
 		return fmt.Errorf("robot autn[%s] cannot be nil.", info.AuthCode)
 	}
-	
+
 	now := time.Now().Unix()
 	info.CreatedAt = now
 	info.UpdatedAt = now
-	
+
 	_, err := x.Insert(info)
 	if err != nil {
 		holmes.Error("create robot auth error: %v", err)
 		return err
 	}
 	holmes.Info("create robot auth[%v] success.", info)
-	
+
 	return nil
 }
 

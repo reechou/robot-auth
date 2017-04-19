@@ -28,9 +28,9 @@ func NewLogic(cfg *config.Config) *Logic {
 
 func (self *Logic) init() {
 	http.HandleFunc("/robot/receive_msg", self.RobotReceiveMsg)
-	
+
 	http.HandleFunc("/manager/QhWT4xJ1W7v5PRwV", self.CreateRobotAuth)
-	
+
 	//http.HandleFunc("/auth/check_robot_auth", self.CheckRobotAuth)
 	//http.HandleFunc("/auth/reset_robot_auth", self.ResetRobotAuth)
 }
@@ -44,7 +44,7 @@ func (self *Logic) Run() {
 	if self.cfg.Debug {
 		EnableDebug()
 	}
-	
+
 	mux := http.NewServeMux()
 	mux.Handle(AuthPrefix+"/", &AuthHandler{l: self})
 
