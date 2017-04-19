@@ -4,6 +4,7 @@ const (
 	RESPONSE_OK = iota
 	RESPONSE_ERR
 	RESPONSE_EXPIRED
+	RESPONSE_SYSTEM
 )
 
 type Response struct {

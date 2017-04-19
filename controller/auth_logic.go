@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 	"fmt"
+	"crypto/md5"
+	"encoding/hex"
 	
 	"github.com/reechou/holmes"
 	"github.com/reechou/robot-auth/proto"
@@ -135,8 +137,17 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 		return rsp
 	}
 	
-	if ra.TempUri != rr.Path || ra.IfUseUri != 0 {
-		holmes.Error("uri check error: %s %s or uri has used[%d]", ra.TempUri, rr.Path, ra.IfUseUri)
+	md5Key := fmt.Sprintf("%s%s", ra.AuthCode, ra.TempUri)
+	allSecretKey := string(md5Of32(md5Of32([]byte(md5Key))))
+	if len(allSecretKey) < 8 {
+		holmes.Error("md5 error")
+		rsp.Code = proto.RESPONSE_SYSTEM
+		return rsp
+	}
+	realSecretKey := allSecretKey[:8]
+	
+	if realSecretKey != rr.Path || ra.IfUseUri != 0 {
+		holmes.Error("uri check error: %s %s or uri has used[%d]", realSecretKey, rr.Path, ra.IfUseUri)
 		rsp.Code = proto.RESPONSE_ERR
 		rsp.Msg = "uri error or uri has used."
 		return rsp
@@ -184,4 +195,13 @@ func (self *Logic) doResetAuth(rr *HandlerRequest) *proto.Response {
 	}
 	
 	return rsp
+}
+
+func md5Of32(src []byte) []byte {
+	hash := md5.New()
+	hash.Write(src)
+	cipherText2 := hash.Sum(nil)
+	hexText := make([]byte, 32)
+	hex.Encode(hexText, cipherText2)
+	return hexText
 }

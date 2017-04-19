@@ -16,3 +16,8 @@
 2017/04/19 17:09:03 ERROR [controller.(*Logic).doCheckAuth](auth_logic.go:139) uri check error: B1i166Y6HF25zPcN B1i166Y6HF25zPcN or uri has used[1]
 2017/04/19 17:09:55  INFO [controller.(*Logic).Run](logic.go:51) server starting on[:6565]..
 2017/04/19 17:09:59 ERROR [controller.(*Logic).doCheckAuth](auth_logic.go:139) uri check error: B1i166Y6HF25zPcN B1i166Y6HF25zPcN or uri has used[1]
+2017/04/19 17:13:31  INFO [controller.(*Logic).Run](logic.go:51) server starting on[:6565]..
+2017/04/19 17:27:00  INFO [controller.(*Logic).Run](logic.go:51) server starting on[:6565]..
+2017/04/19 17:27:07 ERROR [controller.(*Logic).doCheckAuth](auth_logic.go:150) uri check error: 8e88d4a0 583PTVoAgk1Vldi1 or uri has used[1]
+2017/04/19 17:29:35  INFO [controller.(*Logic).Run](logic.go:51) server starting on[:6565]..
+2017/04/19 17:30:42 ERROR [controller.(*Logic).doCheckAuth](auth_logic.go:150) uri check error: 66ff7d8f 66ff7d8f or uri has used[1]
