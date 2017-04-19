@@ -1,0 +1,9 @@
+2017/04/19 10:18:39  INFO [controller.(*Logic).Run](logic.go:45) server starting on[:6565]..
+2017/04/19 10:20:53  INFO [controller.(*Logic).Run](logic.go:47) server starting on[:6565]..
+2017/04/19 10:20:55 ERROR [models.CreateRobotAuthList](account.go:43) create robot auth list error: Error 1146: Table 'auth.robot_auth' doesn't exist
+2017/04/19 10:21:25  INFO [controller.(*Logic).Run](logic.go:47) server starting on[:6565]..
+2017/04/19 10:28:05  INFO [controller.(*Logic).Run](logic.go:47) server starting on[:6565]..
+2017/04/19 10:30:47 ERROR [controller.(*Logic).CheckRobotAuth](srv_endpoint.go:90) update robot auth machine error: auth[fa962416-c2f1-4a1b-813b-b27960ad9b08] has bind machine
+2017/04/19 10:33:58  INFO [controller.(*Logic).Run](logic.go:47) server starting on[:6565]..
+2017/04/19 10:40:56  INFO [controller.(*Logic).Run](logic.go:47) server starting on[:6565]..
+2017/04/19 10:41:37 ERROR [controller.(*Logic).CheckRobotAuth](srv_endpoint.go:97) check robot auth db auth_code[reechou-macbook] != req auth_code[reechou-macbok]
