@@ -21,4 +21,10 @@ type CreateRobotAuthReq struct {
 type CheckRobotAuthReq struct {
 	AuthCode    string `json:"authCode"`
 	MachineCode string `json:"machineCode"`
+	Timestamp   int64  `json:"timestamp"`
+}
+
+type CheckRobotAuthRsp struct {
+	EndTime   int64  `json:"endTime"`
+	SecretKey string `json:"secretKey"`
 }

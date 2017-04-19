@@ -171,6 +171,12 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 	ra.IfUseUri = 1
 	models.UpdateRobotAuthTempUriIfUse(ra)
 
+	rspKey := string(md5Of32(md5Of32(md5Of32([]byte(fmt.Sprintf("%s%d", ra.TempUri, req.Timestamp))))))
+	rsp.Data = &proto.CheckRobotAuthRsp{
+		EndTime:   ra.EndTime,
+		SecretKey: rspKey,
+	}
+
 	return rsp
 }
 
