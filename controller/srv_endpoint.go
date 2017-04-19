@@ -36,12 +36,14 @@ func (self *Logic) CreateRobotAuth(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	now := time.Now().Unix()
+	endTime := now + int64(86400 * req.ExpiryDate)
 	var authList []models.RobotAuth
 	for _, v := range authCodeList {
 		authList = append(authList, models.RobotAuth{
 			AuthCode: v,
 			CreatedAt: now,
 			UpdatedAt: now,
+			EndTime: endTime,
 		})
 	}
 	err := models.CreateRobotAuthList(authList)

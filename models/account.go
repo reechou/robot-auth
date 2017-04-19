@@ -11,6 +11,9 @@ type RobotAuth struct {
 	ID          int64  `xorm:"pk autoincr" json:"id"`
 	AuthCode    string `xorm:"not null default '' varchar(128) unique" json:"authCode"`
 	MachineCode string `xorm:"not null default '' varchar(1024)" json:"machineCode"`
+	TempUri     string `xorm:"not null default '' varchar(64)" json:"tempUri"`
+	IfUseUri    int64  `xorm:"not null default 0 int" json:"ifUseUri"`
+	EndTime     int64  `xorm:"not null default 0 int" json:"endTime"`
 	CreatedAt   int64  `xorm:"not null default 0 int" json:"createAt"`
 	UpdatedAt   int64  `xorm:"not null default 0 int" json:"-"`
 }
@@ -58,6 +61,24 @@ func GetRobotAuth(info *RobotAuth) (bool, error) {
 	return true, nil
 }
 
+func UpdateRobotAuthTempUri(info *RobotAuth) error {
+	info.UpdatedAt = time.Now().Unix()
+	affected, err := x.ID(info.ID).Cols("temp_uri", "if_use_uri", "updated_at").Update(info)
+	if affected == 0 {
+		return fmt.Errorf("auth update uri error")
+	}
+	return err
+}
+
+func UpdateRobotAuthTempUriIfUse(info *RobotAuth) error {
+	info.UpdatedAt = time.Now().Unix()
+	affected, err := x.ID(info.ID).Cols("if_use_uri", "updated_at").Update(info)
+	if affected == 0 {
+		return fmt.Errorf("auth update uri if use error")
+	}
+	return err
+}
+
 func UpdateRobotAuthMachine(info *RobotAuth) error {
 	info.UpdatedAt = time.Now().Unix()
 	_, err := x.ID(info.ID).Cols("machine_code", "updated_at").Update(info)
@@ -66,7 +87,7 @@ func UpdateRobotAuthMachine(info *RobotAuth) error {
 
 func UpdateRobotAuthMachineForce(info *RobotAuth) error {
 	info.UpdatedAt = time.Now().Unix()
-	affected, err := x.ID(info.ID).Cols("machine_code", "updated_at").Where("machine_code = ''").Update(info)
+	affected, err := x.ID(info.ID).Cols("machine_code", "if_use_uri", "updated_at").Where("machine_code = ''").Update(info)
 	if affected == 0 {
 		return fmt.Errorf("auth[%s] has bind machine", info.AuthCode)
 	}

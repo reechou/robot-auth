@@ -3,6 +3,7 @@ package proto
 const (
 	RESPONSE_OK = iota
 	RESPONSE_ERR
+	RESPONSE_EXPIRED
 )
 
 type Response struct {
@@ -13,6 +14,7 @@ type Response struct {
 
 type CreateRobotAuthReq struct {
 	Num int `json:"num"`
+	ExpiryDate int `json:"expiryDate"` // day
 }
 
 type CheckRobotAuthReq struct {
