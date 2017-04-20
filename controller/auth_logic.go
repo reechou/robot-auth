@@ -45,14 +45,14 @@ func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
 	}
 
 	now := time.Now().Unix()
-	endTime := now + int64(86400*req.ExpiryDate)
+	//endTime := now + int64(86400*req.ExpiryDate)
 	var authList []models.RobotAuth
 	for _, v := range authCodeList {
 		authList = append(authList, models.RobotAuth{
 			AuthCode:  v,
 			CreatedAt: now,
 			UpdatedAt: now,
-			EndTime:   endTime,
+			AuthTime:  int64(req.ExpireDate),
 		})
 	}
 	err = models.CreateRobotAuthList(authList)
@@ -74,6 +74,19 @@ func (self *Logic) doAuthUri(rr *HandlerRequest) *proto.Response {
 	err := json.Unmarshal(rr.Val, &req)
 	if err != nil {
 		holmes.Error("json unmarshal error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		return rsp
+	}
+	
+	// check secret key
+	secretKey := string(md5Of32(md5Of32([]byte(fmt.Sprintf("%s%d", req.AuthCode, req.Timestamp)))))
+	if len(secretKey) < 10 {
+		holmes.Error("len(secretKey)[%d] < 10", len(secretKey))
+		rsp.Code = proto.RESPONSE_ERR
+		return rsp
+	}
+	if secretKey[:10] != req.SecretKey {
+		holmes.Error("secretKey[:10][%s] != req.SecretKey[%s]", secretKey[:10], req.SecretKey)
 		rsp.Code = proto.RESPONSE_ERR
 		return rsp
 	}
@@ -132,10 +145,6 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 	}
 
 	now := time.Now().Unix()
-	if now > ra.EndTime {
-		rsp.Code = proto.RESPONSE_EXPIRED
-		return rsp
-	}
 
 	md5Key := fmt.Sprintf("%s%s", ra.AuthCode, ra.TempUri)
 	allSecretKey := string(md5Of32(md5Of32([]byte(md5Key))))
@@ -156,20 +165,37 @@ func (self *Logic) doCheckAuth(rr *HandlerRequest) *proto.Response {
 	if ra.MachineCode == "" {
 		ra.MachineCode = req.MachineCode
 		ra.IfUseUri = 1
-		err = models.UpdateRobotAuthMachineForce(ra)
-		if err != nil {
-			holmes.Error("update robot auth machine error: %v", err)
-			rsp.Code = proto.RESPONSE_ERR
+		if ra.IfAuth == 0 {
+			ra.IfAuth = 1
+			ra.EndTime = now + 86400*ra.AuthTime
+			err = models.UpdateRobotAuthMachineFirst(ra)
+			if err != nil {
+				holmes.Error("update robot first auth machine error: %v", err)
+				rsp.Code = proto.RESPONSE_ERR
+				return rsp
+			}
+		} else {
+			err = models.UpdateRobotAuthMachineForce(ra)
+			if err != nil {
+				holmes.Error("update robot auth machine error: %v", err)
+				rsp.Code = proto.RESPONSE_ERR
+				return rsp
+			}
 		}
+	} else {
+		if ra.MachineCode != req.MachineCode {
+			holmes.Error("check robot auth db machine_code[%s] != req machine_code[%s]", ra.MachineCode, req.MachineCode)
+			rsp.Code = proto.RESPONSE_ERR
+			return rsp
+		}
+		ra.IfUseUri = 1
+		models.UpdateRobotAuthTempUriIfUse(ra)
+	}
+	
+	if now > ra.EndTime {
+		rsp.Code = proto.RESPONSE_EXPIRED
 		return rsp
 	}
-	if ra.MachineCode != req.MachineCode {
-		holmes.Error("check robot auth db auth_code[%s] != req auth_code[%s]", ra.MachineCode, req.MachineCode)
-		rsp.Code = proto.RESPONSE_ERR
-		return rsp
-	}
-	ra.IfUseUri = 1
-	models.UpdateRobotAuthTempUriIfUse(ra)
 
 	rspKey := string(md5Of32(md5Of32(md5Of32([]byte(fmt.Sprintf("%s%d", ra.TempUri, req.Timestamp))))))
 	rsp.Data = &proto.CheckRobotAuthRsp{

@@ -13,6 +13,8 @@ type RobotAuth struct {
 	MachineCode string `xorm:"not null default '' varchar(1024)" json:"machineCode"`
 	TempUri     string `xorm:"not null default '' varchar(64)" json:"tempUri"`
 	IfUseUri    int64  `xorm:"not null default 0 int" json:"ifUseUri"`
+	IfAuth      int64  `xorm:"not null default 0 int" json:"ifAuth"`
+	AuthTime    int64  `xorm:"not null default 0 int" json:"authTime"`
 	EndTime     int64  `xorm:"not null default 0 int" json:"endTime"`
 	CreatedAt   int64  `xorm:"not null default 0 int" json:"createAt"`
 	UpdatedAt   int64  `xorm:"not null default 0 int" json:"-"`
@@ -90,6 +92,15 @@ func UpdateRobotAuthMachineForce(info *RobotAuth) error {
 	affected, err := x.ID(info.ID).Cols("machine_code", "if_use_uri", "updated_at").Where("machine_code = ''").Update(info)
 	if affected == 0 {
 		return fmt.Errorf("auth[%s] has bind machine", info.AuthCode)
+	}
+	return err
+}
+
+func UpdateRobotAuthMachineFirst(info *RobotAuth) error {
+	info.UpdatedAt = time.Now().Unix()
+	affected, err := x.ID(info.ID).Cols("machine_code", "if_use_uri", "if_auth", "end_time", "updated_at").Where("machine_code = ''").And("if_auth = 0").Update(info)
+	if affected == 0 {
+		return fmt.Errorf("auth[%s] has bind machine or has authed", info.AuthCode)
 	}
 	return err
 }
