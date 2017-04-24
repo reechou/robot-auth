@@ -22,9 +22,15 @@ func (self *Logic) doAuth(rr *HandlerRequest) *proto.Response {
 		return self.doAuthUri(rr)
 	case "reset_robot_auth":
 		return self.doResetAuth(rr)
+	case "get_commission":
+		return self.doGetCommission(rr)
 	default:
 		return self.doCheckAuth(rr)
 	}
+}
+
+func (self *Logic) doGetCommission(rr *HandlerRequest) *proto.Response {
+	return &proto.Response{Code: proto.RESPONSE_OK, Data: self.cfg.CommissionRate}
 }
 
 func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
