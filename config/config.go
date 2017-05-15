@@ -37,6 +37,9 @@ type Config struct {
 	Version   string
 	IfShowSql bool
 	
+	UpdateVersion string
+	UpdateUrl     string
+	
 	CommissionRate []int
 
 	RobotHost

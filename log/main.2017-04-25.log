@@ -1,0 +1,12 @@
+2017/04/25 16:04:46  INFO [controller.(*Logic).Run](logic.go:51) server starting on[:6565]..
+2017/04/25 16:05:06 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[14ac626e-daa5-4542-be58-c3a4b8897c2f] md5 auth[f7d6a83b0fe0846b]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[42eac28f-271e-4cd0-a0f0-867c05ab71ea] md5 auth[ef80a49531e23b0d]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[83770a51-95a0-46cd-bb6b-2352cec69b97] md5 auth[eb40b28662e71562]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[9ca9c6ed-c379-496a-87ca-58a1771f9aba] md5 auth[92c3aaf4bebaae54]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[9b3215c8-8d98-4aba-b18d-974a23484f1b] md5 auth[05297fbe2c0e23ac]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[52b6e164-1d65-4bb5-a5b5-377c80f4a430] md5 auth[46e2b675a3a961a7]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[ba4a802a-9c5f-4ecb-91ee-8b281b02028f] md5 auth[033c5840f4eabb78]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[75cfd996-7b58-4976-b724-f74b67b706fa] md5 auth[199b9a7bc452e517]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[fde58ccf-bd46-4a0d-a92d-7b90a96743dd] md5 auth[be3104bf1c793021]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[211329db-15fc-45e6-a94b-3bb34ef31b26] md5 auth[a2ead290b796cc92]
+2017/04/25 16:07:01 DEBUG [controller.(*Logic).doCreateAuth](auth_logic.go:52) create auth uuid[27101689-350e-4433-9daa-8452ca64cf0d] md5 auth[aaf1aaf40149ec77]

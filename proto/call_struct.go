@@ -29,3 +29,8 @@ type CheckRobotAuthRsp struct {
 	EndTime   int64  `json:"endTime"`
 	SecretKey string `json:"secretKey"`
 }
+
+type CheckUpdateRsp struct {
+	Version string `json:"version"`
+	Url     string `json:"url"`
+}

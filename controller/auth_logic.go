@@ -24,8 +24,20 @@ func (self *Logic) doAuth(rr *HandlerRequest) *proto.Response {
 		return self.doResetAuth(rr)
 	case "get_commission":
 		return self.doGetCommission(rr)
+	case "check_update":
+		return self.doCheckUpdate(rr)
 	default:
 		return self.doCheckAuth(rr)
+	}
+}
+
+func (self *Logic) doCheckUpdate(rr *HandlerRequest) *proto.Response {
+	return &proto.Response{
+		Code: proto.RESPONSE_OK,
+		Data: &proto.CheckUpdateRsp{
+			Version: self.cfg.UpdateVersion,
+			Url: self.cfg.UpdateUrl,
+		},
 	}
 }
 
@@ -47,7 +59,10 @@ func (self *Logic) doCreateAuth(rr *HandlerRequest) *proto.Response {
 	var authCodeList []string
 	for i := 0; i < req.Num; i++ {
 		u := uuid.NewV4()
-		authCodeList = append(authCodeList, u.String())
+		uuidKey := u.String()
+		md5Key := md5StringOf16([]byte(u.String()))
+		holmes.Debug("create auth uuid[%s] md5 auth[%s]", uuidKey, md5Key)
+		authCodeList = append(authCodeList, md5Key)
 	}
 
 	now := time.Now().Unix()
@@ -242,4 +257,17 @@ func md5Of32(src []byte) []byte {
 	hexText := make([]byte, 32)
 	hex.Encode(hexText, cipherText2)
 	return hexText
+}
+
+func md5StringOf32(src []byte) string {
+	hash := md5.New()
+	hash.Write(src)
+	cipherText2 := hash.Sum(nil)
+	//hexText := make([]byte, 32)
+	//hex.Encode(hexText, cipherText2)
+	return hex.EncodeToString(cipherText2)
+}
+
+func md5StringOf16(src []byte) string {
+	return md5StringOf32(src)[8:24]
 }
