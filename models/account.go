@@ -83,7 +83,7 @@ func UpdateRobotAuthTempUriIfUse(info *RobotAuth) error {
 
 func UpdateRobotAuthMachine(info *RobotAuth) error {
 	info.UpdatedAt = time.Now().Unix()
-	_, err := x.ID(info.ID).Cols("machine_code", "updated_at").Update(info)
+	_, err := x.Cols("machine_code", "updated_at").Update(info, &RobotAuth{AuthCode: info.AuthCode})
 	return err
 }
 
